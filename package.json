@@ -1,0 +1,67 @@
+{
+  "name": "taskify",
+  "version": "0.0.1",
+  "description": "Learn",
+  "keywords": [
+    "loopback-application",
+    "loopback"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "18 || 20 || 22"
+  },
+  "scripts": {
+    "build": "lb-tsc",
+    "build:watch": "lb-tsc --watch",
+    "lint": "npm run eslint",
+    "lint:fix": "npm run eslint:fix",
+    "eslint": "lb-eslint --report-unused-disable-directives .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "pretest": "npm run rebuild",
+    "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
+    "posttest": "npm run lint",
+    "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
+    "premigrate": "npm run build",
+    "migrate": "node ./dist/migrate",
+    "preopenapi-spec": "npm run build",
+    "openapi-spec": "node ./dist/openapi-spec",
+    "prestart": "npm run rebuild",
+    "start": "node -r source-map-support/register .",
+    "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Mohammed Raza <mohammedrraza26@gmail.com>",
+  "license": "",
+  "files": [
+    "README.md",
+    "dist",
+    "src",
+    "!*/__tests__"
+  ],
+  "dependencies": {
+    "@loopback/boot": "^7.0.8",
+    "@loopback/core": "^6.1.5",
+    "@loopback/repository": "^7.0.8",
+    "@loopback/rest": "^14.0.8",
+    "@loopback/rest-explorer": "^7.0.8",
+    "@loopback/service-proxy": "^7.0.8",
+    "mongoose": "^8.8.2",
+    "tslib": "^2.0.0"
+  },
+  "devDependencies": {
+    "@loopback/build": "^11.0.7",
+    "@loopback/eslint-config": "^15.0.4",
+    "@loopback/testlab": "^7.0.7",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^16.18.119",
+    "eslint": "^8.57.0",
+    "source-map-support": "^0.5.21",
+    "typescript": "~5.2.2"
+  },
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
+}
