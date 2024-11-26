@@ -1,4 +1,5 @@
-import { Entity, model, property } from "@loopback/repository";
+import { Entity, hasMany, model, property } from "@loopback/repository";
+import { Task } from "./task.model";
 
 @model()
 export class User extends Entity {
@@ -34,13 +35,16 @@ export class User extends Entity {
   })
   profilePhoto?: string;
 
+  @hasMany(() => Task)
+  tasks: Task[];
+
   constructor(data?: Partial<User>) {
     super(data);
   }
 }
 
 export interface UserRelations {
-  // describe navigational properties here
+  tasks?: Task[]; // describe navigational properties here
 }
 
 export type UserWithRelations = User & UserRelations;
