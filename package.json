@@ -50,6 +50,7 @@
     "@loopback/rest": "^14.0.8",
     "@loopback/rest-explorer": "^7.0.8",
     "@loopback/service-proxy": "^7.0.8",
+    "dotenv": "^16.4.5",
     "mongoose": "^8.8.2",
     "tslib": "^2.0.0"
   },
