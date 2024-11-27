@@ -2,16 +2,17 @@ import { inject } from "@loopback/core";
 import { MongoDbDataSource } from "../datasources";
 import { User, UserRelations } from "../models";
 import { DefaultCrudRepository } from "@loopback/repository";
-import { generateHashPassword } from "../utils";
+import { comparePassword, generateHashPassword, jwtVerify } from "../utils";
 import { ILoginCredentials } from "../interfaces";
 import { Collection, Db } from "mongodb";
+import { IJWTPayload } from "../interfaces/jwtPayload";
 
 export class UserRepository extends DefaultCrudRepository<
   User,
   typeof User.prototype.id,
   UserRelations
 > {
-  private db: Db;
+  private collection: Collection;
 
   constructor(@inject("datasources.mongoDB") dataSource: MongoDbDataSource) {
     super(User, dataSource);
@@ -22,7 +23,7 @@ export class UserRepository extends DefaultCrudRepository<
       throw new Error("MongoDB connector is not initialized");
     }
 
-    this.db = connector.db as Db;
+    this.collection = (connector.db as Db).collection("User") as Collection;
   }
 
   async signup(user: Partial<User>): Promise<User> {
@@ -43,11 +44,28 @@ export class UserRepository extends DefaultCrudRepository<
     };
     delete userDoc._id;
 
-    return { ...userDoc, access_token: "" };
+    return userDoc;
   }
 
   async login(cretentials: ILoginCredentials) {
-    const collection: Collection = this.db.collection("User");
-    return await collection.findOne(cretentials);
+    const user = await this.collection.findOne({
+      email: cretentials.email,
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    if (await comparePassword(user.password, cretentials.password)) {
+      return user;
+    }
+    return null;
+  }
+
+  async getUser(payload: IJWTPayload) {
+    return await this.collection.findOne({
+      email: payload.email,
+      username: payload.username,
+    });
   }
 }

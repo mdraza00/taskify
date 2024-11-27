@@ -1,6 +1,7 @@
 import { repository } from "@loopback/repository";
 import { UserRepository } from "../repositories";
 import {
+  get,
   getModelSchemaRef,
   post,
   Request,
@@ -10,7 +11,7 @@ import {
   RestBindings,
 } from "@loopback/rest";
 import { User } from "../models";
-import { jwtSign } from "../utils";
+import { jwtSign, jwtVerify } from "../utils";
 import { inject } from "@loopback/core";
 import { ILoginCredentials } from "../interfaces";
 
@@ -74,9 +75,58 @@ export class UserController {
     }
 
     const result = await this.userRepository.login(credentials);
-    console.log(result);
+
+    if (!result) {
+      return this.res.status(401).json({
+        message: "Incorrect email or password",
+        data: null,
+      });
+    }
+
     return this.res.status(200).json({
       message: "User Authenticated successfully",
+      data: {
+        access_token: jwtSign({
+          username: result.username,
+          email: result.email,
+        }),
+        user: result,
+      },
+    });
+  }
+
+  @get("/user")
+  async getUser() {
+    if (
+      !this.req.headers.authorization ||
+      !this.req.headers.authorization.split(" ")[1]
+    ) {
+      return this.res.status(401).json({
+        status: "Not Authorized",
+        data: null,
+      });
+    }
+    const token = this.req.headers.authorization.split(" ")[1];
+    const payload = jwtVerify(token);
+    if (!payload) {
+      return this.res.status(401).json({
+        message: "Unauthorized",
+        data: null,
+      });
+    }
+
+    const user = await this.userRepository.getUser(payload);
+
+    if (!user) {
+      return this.res.status(404).json({
+        message: "User not found",
+        data: null,
+      });
+    }
+
+    return this.res.status(200).json({
+      message: "user found successfully.",
+      data: user,
     });
   }
 }
