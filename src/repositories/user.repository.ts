@@ -3,14 +3,26 @@ import { MongoDbDataSource } from "../datasources";
 import { User, UserRelations } from "../models";
 import { DefaultCrudRepository } from "@loopback/repository";
 import { generateHashPassword } from "../utils";
+import { ILoginCredentials } from "../interfaces";
+import { Collection, Db } from "mongodb";
 
 export class UserRepository extends DefaultCrudRepository<
   User,
   typeof User.prototype.id,
   UserRelations
 > {
+  private db: Db;
+
   constructor(@inject("datasources.mongoDB") dataSource: MongoDbDataSource) {
     super(User, dataSource);
+
+    const connector = this.dataSource.connector;
+
+    if (!connector || !connector.db) {
+      throw new Error("MongoDB connector is not initialized");
+    }
+
+    this.db = connector.db as Db;
   }
 
   async signup(user: Partial<User>): Promise<User> {
@@ -31,6 +43,11 @@ export class UserRepository extends DefaultCrudRepository<
     };
     delete userDoc._id;
 
-    return userDoc as User;
+    return { ...userDoc, access_token: "" };
+  }
+
+  async login(cretentials: ILoginCredentials) {
+    const collection: Collection = this.db.collection("User");
+    return await collection.findOne(cretentials);
   }
 }
