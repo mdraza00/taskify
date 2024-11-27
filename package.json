@@ -52,6 +52,7 @@
     "@loopback/service-proxy": "^7.0.8",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
+    "loopback-connector-mongodb": "^6.3.0",
     "mongoose": "^8.8.2",
     "tslib": "^2.0.0"
   },
