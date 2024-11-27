@@ -28,6 +28,7 @@
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
     "start": "node -r source-map-support/register .",
+    "dev": "nodemon",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
   },
@@ -50,6 +51,7 @@
     "@loopback/rest": "^14.0.8",
     "@loopback/rest-explorer": "^7.0.8",
     "@loopback/service-proxy": "^7.0.8",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "loopback-connector-mongodb": "^6.3.0",
@@ -60,9 +62,11 @@
     "@loopback/build": "^11.0.7",
     "@loopback/eslint-config": "^15.0.4",
     "@loopback/testlab": "^7.0.7",
+    "@types/bcrypt": "^5.0.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^16.18.119",
     "eslint": "^8.57.0",
+    "nodemon": "^3.1.7",
     "source-map-support": "^0.5.21",
     "typescript": "~5.2.2"
   },
