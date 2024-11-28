@@ -95,18 +95,9 @@ export class UserController {
     });
   }
 
-  @get("/user")
+  @get("/user/get-user")
   async getUser() {
-    if (
-      !this.req.headers.authorization ||
-      !this.req.headers.authorization.split(" ")[1]
-    ) {
-      return this.res.status(401).json({
-        status: "Not Authorized",
-        data: null,
-      });
-    }
-    const token = this.req.headers.authorization.split(" ")[1];
+    const token = (this.req.headers.authorization as string).split(" ")[1];
     const payload = jwtVerify(token);
     if (!payload) {
       return this.res.status(401).json({

@@ -63,9 +63,16 @@ export class UserRepository extends DefaultCrudRepository<
   }
 
   async getUser(payload: IJWTPayload) {
-    return await this.collection.findOne({
-      email: payload.email,
-      username: payload.username,
-    });
+    return await this.collection.findOne(
+      {
+        email: payload.email,
+        username: payload.username,
+      },
+      {
+        projection: {
+          password: 0,
+        },
+      }
+    );
   }
 }
