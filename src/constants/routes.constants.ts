@@ -1,1 +1,1 @@
-export const routes = ["/user/get-user"];
+export const routes = ["/user/get-user", "/user/get-users"];

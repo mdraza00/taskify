@@ -4,7 +4,7 @@ import { User, UserRelations } from "../models";
 import { DefaultCrudRepository } from "@loopback/repository";
 import { comparePassword, generateHashPassword, jwtVerify } from "../utils";
 import { ILoginCredentials } from "../interfaces";
-import { Collection, Db } from "mongodb";
+import { Collection, Db, ObjectId } from "mongodb";
 import { IJWTPayload } from "../interfaces/jwtPayload";
 
 export class UserRepository extends DefaultCrudRepository<
@@ -22,7 +22,7 @@ export class UserRepository extends DefaultCrudRepository<
     if (!connector || !connector.db) {
       throw new Error("MongoDB connector is not initialized");
     }
-
+    console.log("MongoDB Connector is successfully initialized");
     this.collection = (connector.db as Db).collection("User") as Collection;
   }
 
@@ -74,5 +74,31 @@ export class UserRepository extends DefaultCrudRepository<
         },
       }
     );
+  }
+
+  async getUsers(pageNum: number, limit: number) {
+    try {
+      const result = await this.collection
+        .find({}, { projection: { password: 0 } })
+        .limit(limit)
+        .skip((pageNum - 1) * limit)
+        .toArray();
+      console.log("result => ", result);
+      return result;
+    } catch (err) {
+      console.error("Error => ", err);
+      return null;
+    }
+  }
+
+  async getUserById(id: string) {
+    try {
+      const result = await this.collection.findOne({ _id: new ObjectId(id) });
+      console.log(result);
+      return result;
+    } catch (err) {
+      console.log("error => ", err);
+      return null;
+    }
   }
 }

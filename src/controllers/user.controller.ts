@@ -3,6 +3,7 @@ import { UserRepository } from "../repositories";
 import {
   get,
   getModelSchemaRef,
+  param,
   post,
   Request,
   requestBody,
@@ -22,7 +23,7 @@ export class UserController {
     @inject(RestBindings.Http.RESPONSE) private res: Response
   ) {}
 
-  @post("/user")
+  @post("/user/sign-up")
   @response(200, {
     description: "User model instance",
     content: { "application/json": { schema: getModelSchemaRef(User) } },
@@ -118,6 +119,43 @@ export class UserController {
     return this.res.status(200).json({
       message: "user found successfully.",
       data: user,
+    });
+  }
+
+  @get("/user/get-user/{id}")
+  async getUserById(@param.path.string("id") id: string) {
+    const result = await this.userRepository.getUserById(id);
+
+    if (!result) {
+      return this.res.status(404).json({
+        message: "user not found",
+        data: null,
+      });
+    }
+
+    return this.res.status(200).json({
+      message: "user found successfully",
+      data: result,
+    });
+  }
+
+  @get("/user/get-users")
+  async getUsers(
+    @param.query.number("page") pageNumber: number = 1,
+    @param.query.number("limit") limit: number = 5
+  ) {
+    const result = await this.userRepository.getUsers(pageNumber, limit);
+
+    if (result) {
+      return this.res.status(500).json({
+        message: "something went wrong.",
+        data: [],
+      });
+    }
+
+    return this.res.status(200).json({
+      message: "users found successfully.",
+      data: result,
     });
   }
 }
