@@ -1,4 +1,10 @@
-import { Entity, hasOne, model, property } from "@loopback/repository";
+import {
+  belongsTo,
+  Entity,
+  hasOne,
+  model,
+  property,
+} from "@loopback/repository";
 import { User } from "./user.model";
 
 @model()
@@ -13,7 +19,7 @@ export class Task extends Entity {
   @property({ type: "string", required: true })
   title: string;
 
-  @property({ type: "string", required: "true" })
+  @property({ type: "string", required: true })
   description: string;
 
   @property({ type: "string", required: true })
@@ -22,11 +28,8 @@ export class Task extends Entity {
   @property({ type: "string", required: true })
   dueDate: string;
 
-  @property({ type: "string", required: true })
+  @belongsTo(() => User)
   ownerId: string;
-
-  @hasOne(() => User)
-  user: User;
 
   constructor(data?: Partial<Task>) {
     super(data);

@@ -27,6 +27,7 @@ export class TaskifyApplication extends BootMixin(
     // Set up default home page
     this.static("/", path.join(__dirname, "../public"));
 
+    this.basePath("/api");
     // Customize @loopback/rest-explorer configuration here
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: "/explorer",
